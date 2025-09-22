@@ -3,17 +3,17 @@ import bcrypt from 'bcrypt';
 
 import {pool} from "./connection.js";
 
-const usersData: [string, string, string, string, string, boolean][] = [
-  ['admin1@example.com', 'admin1', 'Brian Johnson', 'https://i.pravatar.cc/150?img=47', 'admin1', true],
-  ['user2@example.com', 'user2', 'Alexandra Adams', 'https://i.pravatar.cc/150?img=12', 'user2', true],
-  ['user3@example.com', 'user3', 'Carlos Martinez', 'https://i.pravatar.cc/150?img=5', 'user3', true],
-  ['user4@example.com', 'user4', 'Emily Chen', 'https://i.pravatar.cc/150?img=7', 'user4', true],
-  ['user5@example.com', 'user5', 'Michael Scott', 'https://i.pravatar.cc/150?img=8', 'user5', true],
-  ['user6@example.com', 'user6', 'Sofia Ivanova', 'https://i.pravatar.cc/150?img=10', 'user6', true],
-  ['user7@example.com', 'user7', 'David Brown', 'https://i.pravatar.cc/150?img=11', 'user7', true],
-  ['user8@example.com', 'user8', 'Olivia Taylor', 'https://i.pravatar.cc/150?img=15', 'user8', true],
-  ['user9@example.com', 'user9', 'Anna Müller', 'https://i.pravatar.cc/150?img=16', 'user9', true],
-  ['user10@example.com', 'user10', 'Liam Anderson', 'https://i.pravatar.cc/150?img=17', 'user10', true],
+const usersData: [string, string, string, string, string, string, boolean][] = [
+  ['admin1@example.com', 'admin1', 'Brian Johnson', 'System administrator with 10+ years of experience in server management and security.', 'https://i.pravatar.cc/150?img=47', 'admin1', true],
+  ['user2@example.com', 'user2', 'Alexandra Adams', 'Frontend developer passionate about React, UI/UX, and building smooth web experiences.', 'https://i.pravatar.cc/150?img=12', 'user2', true],
+  ['user3@example.com', 'user3', 'Carlos Martinez', 'Data analyst who loves turning raw numbers into meaningful insights. Coffee addict.', 'https://i.pravatar.cc/150?img=5', 'user3', true],
+  ['user4@example.com', 'user4', 'Emily Chen', '', 'https://i.pravatar.cc/150?img=7', 'user4', true],
+  ['user5@example.com', 'user5', 'Michael Scott', '', 'https://i.pravatar.cc/150?img=8', 'user5', true],
+  ['user6@example.com', 'user6', 'Sofia Ivanova', '', 'https://i.pravatar.cc/150?img=10', 'user6', true],
+  ['user7@example.com', 'user7', 'David Brown', '', 'https://i.pravatar.cc/150?img=11', 'user7', true],
+  ['user8@example.com', 'user8', 'Olivia Taylor', '', 'https://i.pravatar.cc/150?img=15', 'user8', true],
+  ['user9@example.com', 'user9', 'Anna Müller', '', 'https://i.pravatar.cc/150?img=16', 'user9', true],
+  ['user10@example.com', 'user10', 'Liam Anderson', '', 'https://i.pravatar.cc/150?img=17', 'user10', true],
 ];
 
 const workspaceData: [string, string, number][] = [
@@ -230,12 +230,12 @@ async function seed() {
   const users = await Promise.all(
     usersData.map(async user => {
       const password_hash = await bcrypt.hash(user[4], 10);
-      return [user[0], user[1], user[2], user[3], password_hash, user[5]] as [string, string, string, string, string, boolean];
+      return [user[0], user[1], user[2], user[3], user[4], password_hash, user[6]] as [string, string, string, string, string, string, boolean];
     })
   );
 
   await pool.query(
-    `INSERT INTO user (email, login, fullName, profilePicture, password_hash, is_verified)
+    `INSERT INTO user (email, login, fullName, description, profilePicture, password_hash, is_verified)
      VALUES ?
      ON DUPLICATE KEY UPDATE
      email = VALUES(email),

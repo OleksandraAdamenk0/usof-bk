@@ -21,6 +21,7 @@ async function init() {
       email VARCHAR(100) UNIQUE NOT NULL,
       login VARCHAR(100) UNIQUE NOT NULL,
       fullName VARCHAR(100) NOT NULL,
+      description TEXT DEFAULT NULL,
       profilePicture VARCHAR(255) DEFAULT 'images/defaultAvatar.png',
       status ENUM('active', 'banned'),
       github VARCHAR(255),

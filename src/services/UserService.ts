@@ -63,4 +63,24 @@ export class UserService extends BaseService<UserData> {
     const rows = await this.query(`SELECT github, linkedin FROM ${this.table} WHERE id = ?`, [id]);
     return rows[0];
   }
+
+  async updateLogin(id: number, login: string): Promise<void> {
+    await this.query(`UPDATE ${this.table} SET login = ? WHERE id = ?`, [login, id])
+  }
+
+  async updateEmail(id: number, email: string): Promise<void> {
+    await this.query(`UPDATE ${this.table} SET email = ? WHERE id = ?`, [email, id]);
+  }
+
+  async updateFullName(id: number, fullName: string): Promise<void> {
+    await this.query(`UPDATE ${this.table} SET fullName = ? WHERE id = ?`, [id]);
+  }
+
+  async updateGitHub(id: number, gitHub: string): Promise<void> {
+    await this.query(`UPDATE ${this.table} SET github = ? WHERE id = ?`, [gitHub, id]);
+  }
+
+  async updateLinkedin(id: number, linkedin: string): Promise<void> {
+    await this.query(`UPDATE ${this.table} SET linkedin = ? WHERE id = ?`, [linkedin,id]);
+  }
 }
