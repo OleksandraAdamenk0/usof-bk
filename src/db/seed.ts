@@ -225,11 +225,17 @@ const reactionsData: [number, number, 'like' | 'dislike'][] = [
   [9, 34, 'like'],        [10, 38, 'like']
 ]
 
+const workspacesUsers: [number, number, 'user' | 'admin'][] = [
+  [1, 1, 'admin'],    [2, 1, 'user'],    [3, 1, 'user'],    [4, 1, 'user'],    [5, 1, 'user'],
+  [6, 1, 'user'],    [7, 1, 'user'],    [8, 1, 'user'],    [9, 1, 'user'],    [10, 1, 'user'],
+
+]
+
 async function seed() {
   // populate users
   const users = await Promise.all(
     usersData.map(async user => {
-      const password_hash = await bcrypt.hash(user[4], 10);
+      const password_hash = await bcrypt.hash(user[5], 10);
       return [user[0], user[1], user[2], user[3], user[4], password_hash, user[6]] as [string, string, string, string, string, string, boolean];
     })
   );
@@ -242,6 +248,8 @@ async function seed() {
      login = VALUES(login);`,
     [users]
   );
+
+  await pool.query(` UPDATE user SET role="admin" WHERE id=1`);
 
   console.log('Table "user" seeded.');
 
@@ -297,6 +305,8 @@ async function seed() {
   await pool.query(`INSERT INTO reaction(user, contentItemId, type) VALUES ?`, [reactionsData])
   console.log('Table "reaction" seeded.');
 
+  await pool.query(`INSERT INTO workspacesUsers (user, workspace, role) VALUES ?`, [workspacesUsers]);
+  console.log('Table "workspacesUsers" seeded.');
   // TO DO: seed other tables here
 
 }

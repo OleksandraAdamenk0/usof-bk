@@ -24,6 +24,7 @@ export const loginController = async (req: Request, res: Response) => {
     if (!user) return res.status(401).json({ message: "User not found" });
 
     const isValid = await bcrypt.compare(password, user.password_hash);
+    console.log("isValid: ", isValid);
     if (!isValid) return res.status(401).json({ message: "Invalid password" });
 
     const accessToken = generateAccessToken(user.id);

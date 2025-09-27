@@ -23,7 +23,8 @@ async function init() {
       fullName VARCHAR(100) NOT NULL,
       description TEXT DEFAULT NULL,
       profilePicture VARCHAR(255) DEFAULT 'images/defaultAvatar.png',
-      status ENUM('active', 'banned'),
+      role ENUM('admin', 'user') DEFAULT 'user',
+      status ENUM('active', 'banned') DEFAULT 'active',
       github VARCHAR(255),
       linkedin VARCHAR(255),
       password_hash VARCHAR(255) NOT NULL,
@@ -52,13 +53,13 @@ async function init() {
   await pool.query(`
   CREATE TABLE IF NOT EXISTS contentItem (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    author INT NOT NULL,
+    author INT,
     workspace INT NOT NULL,
     type ENUM('post', 'comment') NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (author) REFERENCES user(id),
-    FOREIGN KEY (workspace) REFERENCES workspace(id)
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
+    FOREIGN KEY (workspace) REFERENCES workspace(id) ON DELETE CASCADE 
   );
 `);
   console.log('Table "contentItem" created or exists.');
@@ -103,10 +104,10 @@ async function init() {
   CREATE TABLE IF NOT EXISTS tag (
     id INT AUTO_INCREMENT PRIMARY KEY,
     workspace INT NOT NULL,
-    author INT NOT NULL,
+    author INT,
     title VARCHAR(100) NOT NULL,
-    FOREIGN KEY (workspace) REFERENCES workspace(id),
-    FOREIGN KEY (author) REFERENCES user(id),
+    FOREIGN KEY (workspace) REFERENCES workspace(id) ON DELETE CASCADE,
+    FOREIGN KEY (author) REFERENCES user(id) ON DELETE SET NULL,
     UNIQUE (workspace, title)
   );
 `);
@@ -131,7 +132,7 @@ async function init() {
     workspace INT NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT,
-    FOREIGN KEY (workspace) REFERENCES workspace(id),
+    FOREIGN KEY (workspace) REFERENCES workspace(id) ON DELETE CASCADE,
     UNIQUE (workspace, title)
   );
 `);
@@ -140,10 +141,10 @@ async function init() {
 // PostsCategories
   await pool.query(`
   CREATE TABLE IF NOT EXISTS postsCategories (
-    category INT NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category INT,
     post INT NOT NULL,
-    PRIMARY KEY (category, post),
-    FOREIGN KEY (category) REFERENCES category(id) ON DELETE CASCADE,
+    FOREIGN KEY (category) REFERENCES category(id) ON DELETE SET NULL,
     FOREIGN KEY (post) REFERENCES post(contentItemId) ON DELETE CASCADE
   );
 `);
@@ -170,8 +171,21 @@ async function init() {
       post INT NOT NULL,
       user INT NOT NULL,
       createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (user) REFERENCES user(id),
-      FOREIGN KEY (post) REFERENCES post(contentItemId)
+      FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+      FOREIGN KEY (post) REFERENCES post(contentItemId) ON DELETE CASCADE 
+  );`);
+
+  console.log('Table "savedPost" created or exists.');
+
+  await pool.query(`
+  CREATE TABLE IF NOT EXISTS workspacesUsers (
+      workspace INT NOT NULL,
+      user INT NOT NULL,
+      role ENUM('user', 'admin') DEFAULT 'user',
+      rating INT NOT NULL DEFAULT 0,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE,
+      FOREIGN KEY (workspace) REFERENCES workspace(id) ON DELETE CASCADE 
   );`);
 
   console.log('Table "savedPost" created or exists.');

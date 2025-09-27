@@ -83,4 +83,13 @@ export class UserService extends BaseService<UserData> {
   async updateLinkedin(id: number, linkedin: string): Promise<void> {
     await this.query(`UPDATE ${this.table} SET linkedin = ? WHERE id = ?`, [linkedin,id]);
   }
+
+  async create(user: UserData): Promise<number> {
+    const columns = Object.keys(user).join(", ");
+    const placeholders = Object.keys(user).map(() => "?").join(", ");
+    const values = Object.values(user);
+
+    const result =  await this.query(`INSERT INTO ${this.table} (${columns}) VALUES (${placeholders})`, values);
+    return result.insertId || null;
+  }
 }

@@ -21,4 +21,19 @@ export class TagService extends BaseService<TagData> {
     const [rows] = await this.query(`SELECT title FROM ${this.table} WHERE id = ?;`, [id]);
     return rows? rows.title : undefined;
   }
+
+
+  async findByTitle(title: string): Promise<TagData> {
+    const rows = await this.query(`SELECT * FROM ${this.table} WHERE title=?`, [title]);
+    return (rows[0] as TagData) || null
+  }
+
+  async create(tagData: TagData): Promise<number> {
+    const columns = Object.keys(tagData).join(", ");
+    const placeholders = Object.keys(tagData).map(() => "?").join(", ");
+    const values = Object.values(tagData);
+
+    const result =  await this.query(`INSERT INTO ${this.table} (${columns}) VALUES (${placeholders})`, values);
+    return result.insertId || null;
+  }
 }
